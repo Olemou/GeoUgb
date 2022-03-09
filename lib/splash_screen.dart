@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:shimmer/shimmer.dart';
+//import 'package:shimmer/shimmer.dart';
 
 import 'homeScreen.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -40,55 +40,46 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(//utiliser pour empiler du texte et une image sur du degrade
-        fit: StackFit.expand,//pour dimensionner les enfants non positionnes d'une pile
-          children: <Widget> [//le corps a 2 enfants un conteneur et une colonne
-            Container(
-              decoration: BoxDecoration(
-                color: HexColor("#ffffff"),
-                /*gradient: LinearGradient(
-                  colors: [Colors.white, Colors.orangeAccent.shade100],
-                  begin: Alignment.centerRight,
-                  end: Alignment.centerLeft,
-                ),*/
+		body: Container(
+			width: double.infinity,
+			height: double.infinity,
+			decoration: BoxDecoration(
+                //color: HexColor("#ffffff"),
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+				          colors: [HexColor("#b35c35"), Colors.orangeAccent.shade100],//[Colors.white, Colors.orangeAccent.shade100],
+                ),
+            ),
+			child:Column(
+				crossAxisAlignment: CrossAxisAlignment.center,
+				mainAxisAlignment: MainAxisAlignment.spaceAround,
+				children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 310.0),
+          ),
+					Column(
+						children: const [
+              CircleAvatar(//cree un cercle qui contient l'image
+                radius: 50,
+                backgroundImage: AssetImage('images/logoUGB.jpg'),
               ),
-            ),
-            Column(
-                mainAxisAlignment: MainAxisAlignment.center,//alignement centre sur la colonne de haut en bas
-                children: <Widget>[
-                  CircleAvatar(//cree un cercle qui contient l'image
-                    radius: 75,
-                    backgroundImage: AssetImage('images/logoUGB.jpg'),
-                    ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 15.0),
-                  ),
-                  Shimmer.fromColors(
-                    baseColor: HexColor("#b35c35"),
-                    highlightColor: HexColor("#ffffff"),
-                    child: Center(
-                      child: Container(
-                        padding: EdgeInsets.all(16.0),
-                        child: Text("Université Gaston Berger de Saint-Louis",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'Pacifico',
-                            shadows: <Shadow>[//mettre de l'ombre sur l'ecriture
-                              Shadow(
-                                blurRadius: 18.0,
-                                color: Colors.black87,
-                                offset: Offset.fromDirection(120, 12)//decalage
-                              )
-                            ]
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-            ),
-          ],
-        ),
+              Text("Université Gaston Berger \n de Saint-Louis",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+						],
+					),
+					CircularProgressIndicator(
+						valueColor: AlwaysStoppedAnimation<Color>(HexColor("#ffffff")),
+					),
+				],
+			),
+		),
       );
   }
 }

@@ -1,8 +1,9 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:projet_app/localisation.dart';
+import 'ModelNews.dart';
+import 'model.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen() : super();
@@ -35,14 +36,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   final FancyBottomNavigationState fState = bottomNavigationKey
                       .currentState as FancyBottomNavigationState;
                   fState.setPage(2);
-                }),
+                }
+			),
             TabData(
                 iconData: IconData(62770, fontFamily: 'MaterialIcons'),
                 title: "Se localiser",
                 onclick: () =>
-                    Navigator.of(context)
+					        Navigator.push(
+                        context, MaterialPageRoute(builder: (context) =>
+                      LocalisationPage())),
+                    /*Navigator.of(context)
                         .push(
-                        MaterialPageRoute(builder: (context) => LocalisationPage()))
+                        MaterialPageRoute(builder: (context) => LocalisationPage()),
+                    )*/
             ),
           ],
           initialSelection: 0,
@@ -93,17 +99,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     trailing: Icon(Icons.arrow_right),
                     //flechette permettant de retourner a la page d'accueil
-                    onTap: () { //au clic
-                      Navigator.of(context).pop(); //au clic, le menu se ferme
-                      Navigator.push(
-                          context, MaterialPageRoute(builder: (context) =>
-                          HomeScreen())); //le menu se ferme et repere.dart s'affiche
-                    }
+                  onTap: () { //au clic
+                    //Navigator.of(context).pop(); //au clic, le menu se ferme
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (context) =>
+                        HomeScreen())); //le menu se ferme et la carte de géolocalisation s'affiche
+                  }
                 ),
-				Divider(
-                  color: Colors.brown,
-                  height: 5.0,
-        ), //separe les elements du menu
 				ListTile( //menu
                     hoverColor: HexColor("#ffffff"),
                     //au moment du survol
@@ -117,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     title: Text(
-                      'Se reperer',
+                      'Se repérer',
                       style: TextStyle(
                           fontSize: 18,
                           color: HexColor("#b35c35")
@@ -149,15 +151,55 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         body:
-          Center(
-            child: Text(
-              'Welcome Home!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20.0,
-            ),
-            ),
-          ),
+
+        FutureBuilder(
+          future: Modelnews.getRss(),
+          builder: (BuildContext context, AsyncSnapshot  snap) {
+            if (snap.hasData) {
+              //final List _news = snap.data;
+
+              return ListView.separated(
+                itemBuilder: (BuildContext context, int index ) {
+                  //final _item = _news[index];
+
+
+                  return ListTile(
+
+                    title: Text(snap.data[index].title),
+
+                    subtitle: Text(
+                      snap.data[index].pub,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    onTap: () {
+                      Navigator.push(context,
+                        MaterialPageRoute(builder: (context) =>
+                            NewsDetails(
+                              title: ("Notification"),
+                              url: snap.data[index].linkpage,
+                              key: null,
+                            ),
+                        ),
+                      );
+                    },
+
+                  );
+                },
+                separatorBuilder: (context, i) => const Divider(),
+                itemCount: snap.data.length,
+              );
+            } else if (snap.hasError) {
+              return Center(
+                child: Text(snap.error.toString()),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
     );
   }
 }
